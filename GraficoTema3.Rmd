@@ -1,7 +1,7 @@
 ---
-title: "Imagen Tema 3 - Covid"
-author: "Juliana Justiniano, Valentina Medina, Jaime Gómez-Trenor y Mara Ferrús"
-date: "`r Sys.Date()`"
+title: "GraficoTema3"
+author: "Valentina"
+date: "2024-03-07"
 output: html_document
 ---
 
@@ -9,22 +9,3 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Imagen Tema 3 - Covid
-
-```{r}
-# Cargamos las libreriasque vamos a utilizar:
-suppressWarnings({ # utilizamos esta función para que no se muestren los 
-                   # mensajes de advertencia al compilar
-  library(ggplot2)
-  library(plotly)
-})
-```
-
-## Importamos los datos csv.
-
-```{r}
-# Utilizamos read.csv con header = TRUE ya que la primera fila son las
-# variables que obtienen los datos
-covid <- read.csv("owid-covid-data.csv", header = TRUE)
-
-```
