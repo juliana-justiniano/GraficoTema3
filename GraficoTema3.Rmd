@@ -88,3 +88,28 @@ grafica <- ggplot(datos_covid,
 # Llamamos a la gráfica
 grafica
 ```
+
+Con este primer vistazo de la gráfica ahora vamos a poner los titulos y retoques como las líneas discontinuas del fondo, la medida de los ejes y la forma para hacer la gráfica interactiva, pero solo sería así en formato html.
+
+```{r}
+# Ponemos en la leyenda con los colores el nombre de la variable
+# donde se ha puesto el color a los paises
+grafica <- grafica  + labs(color = "Location")
+
+# Ponemos Los titulos de la gráfica
+grafica <- grafica + 
+  labs(title = " Grupo L - Daily new confirmed COVID-19 deaths",
+       subtitle = "7-day rolling average. For some countries the number of confirmed deaths is much lower \nthan the true number of deaths.This is because of limited testing and challenges in the \nattribution of the cause of death.",
+       x = "Date from Feb 13, 2020 to Feb 28, 2022",
+       y = "Deaths" )
+
+# También ponemos las linias disctinuas en los puntos del 0 al 20
+grafica <- grafica + geom_hline(yintercept = c(2,4,6,8,10,12,14,16,18,20),
+                                linetype = "dashed",
+                                color = "grey") +
+  # Ahora vamos a poner la linia gruesa que marca en el cero
+  geom_hline(yintercept = 0, linetype = "solid", color = "black")
+
+# Llamamos a la gráfica
+grafica
+```
