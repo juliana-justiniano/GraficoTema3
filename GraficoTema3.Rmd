@@ -6,7 +6,23 @@ date: "`r Sys.Date()`"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Imagen Tema 3 - Covid
+
+# Imagen Tema 3 - Covid
+
+## Introducción
+
+Este trabajo consiste en abordar un análisis de los datos que están relacionados con el covid-19 utilizando la importación, la limpieza y selección de datos para obtener una visualización de los datos que puedan ayudar a investigar y comprender la evolución de la enfermedad en diferentes países. Entre ellos destacaremos a España.
+
+Para ello vamos a utilizar la librería ggplot que se encarga de la representación de los gráficos. Con este análisis se puede identificar patrones, tendencias y comparaciones entre la representación de líneas de colores que representará cada país.
+
+Para el gráfico itercativo, se podrá observar en el formato html, aunque se exportará tanto en html como en pdf. El título de cada apartado representará cada parte del trabajpo para llegar al resultado final.
+
+En resumen, este trabajo consiste en detallar una visualización, con una actualización de la evolución de la pandemia de COVID-19 en varios países, con un enfoque especial en España, lo que permitirá tener información valiosa sobre el estado del covid y sus posibles implicaciones.
+
+
+## Carga de datos
+
+
 ```{r}
 # Cargamos las libreriasque vamos a utilizar:
 suppressWarnings({ # utilizamos esta función para que no se muestren los 
@@ -15,34 +31,16 @@ suppressWarnings({ # utilizamos esta función para que no se muestren los
   library(plotly)
 })
 ```
+
 ## Importamos los datos csv.
+
 ```{r}
 # Utilizamos read.csv con header = TRUE ya que la primera fila son las
 # variables que obtienen los datos
 covid <- read.csv("owid-covid-data.csv", header = TRUE)
 ```
-```{r}
-# Como se busca una información de paises en concreto, vamos a crear variables 
-# aparte donde entre ellos destacaremos Espanya.
-paises <- c("United States", "Canada", "Italy",            
-            "United Kingdom", "France", "Germany", "Japan")
-espanya <- "Spain"
-data <- c("location", "date", "new_deaths_smoothed_per_million")
-# Ahora seleccionaremos la información con los vectores anteriores
-# sabiendo que los paises están en location seleccionamos
-datos_paises <- covid[covid$location %in% paises, data]
-datos_esp <- covid[covid$location %in% espanya, data]
-datos_covid <- rbind(datos_esp, datos_paises)
-# Dentro de los datos que hemos seleccionado ahora vamos a ver si existe 
-# algún dato faltante con is.na()
-summary(is.na(datos_covid))
-```
-Como podemos ver que hay datos faltantes solo en la variable new_deaths_smoothed_per_million lo que vamos a hacer es sustiuir donde haya datos faltantes por la media de los datos para que no quede sin nigún NA.
-```{r}
-datos_covid$'new_deaths_smoothed_per_million'[is.na(datos_covid$'new_deaths_smoothed_per_million')] <- mean(datos_covid$'new_deaths_smoothed_per_million', na.rm = TRUE)
-# Comprobamos si lo ha hecho
-summary(is.na(datos_covid))
-```
+
+## Limpiamos los datos y seleccionamos los datos que vamos a utilizar.
 
 ```{r}
 # Como se busca una información de paises en concreto, vamos a crear variables 
@@ -60,12 +58,15 @@ datos_covid <- rbind(datos_esp, datos_paises)
 # algún dato faltante con is.na()
 summary(is.na(datos_covid))
 ```
+
 Como podemos ver que hay datos faltantes solo en la variable new_deaths_smoothed_per_million lo que vamos a hacer es sustiuir donde haya datos faltantes por la media de los datos para que no quede sin nigún NA.
+
 ```{r}
 datos_covid$'new_deaths_smoothed_per_million'[is.na(datos_covid$'new_deaths_smoothed_per_million')] <- mean(datos_covid$'new_deaths_smoothed_per_million', na.rm = TRUE)
 # Comprobamos si lo ha hecho
 summary(is.na(datos_covid))
 ```
+## Representamos la gráfica.
 
 Una herramienta que puede ayudar mejor a representar una gráfica es la librería ggplot que se encarga de eso, y podemos elegir la representación que queramos. A continuación utilizaremos una gráfica de líneas para poder comparar los casos que han muerto por covid de los paises con diferentes colores pero destacando a España con el color rojo.
 
@@ -77,7 +78,7 @@ grafica <- ggplot(datos_covid,
                       group = location))  +
   
   # Lineas de los paises que tendrán color con la variable location 
-  geom_line(data = datos_paises, aes(color = location), size = 0.75)  +
+  geom_line(data = datos_paises, aes(color = location), linewidth = 0.75)  +
   
   # La línea roja que caracteriza a espanya
   geom_line(data = datos_esp, aes(group = espanya),
@@ -113,3 +114,29 @@ grafica <- grafica + geom_hline(yintercept = c(2,4,6,8,10,12,14,16,18,20),
 # Llamamos a la gráfica
 grafica
 ```
+
+Para hace que la gráfica sea interactiva en el html vamos a utilizar ggplotly
+
+```{r}
+# Representamos
+grafica1 <- ggplotly(grafica) %>%
+  layout(
+    annotations = list(
+      text = "7-day rolling average. For some countries the number of confirmed deaths is much lower than the true 
+      number of deaths. This is because of limited testing and challenges in the attribution of the cause of
+      death",
+      x = 0, #ubicación del subtítulo
+      y = 1.05,
+      xref = "paper",
+      yref = "paper",
+      showarrow = FALSE,
+      font = list(size = 10) #tamaño del subtítulo
+      )
+    )
+
+# Llamamos a la gráfica.
+grafica1
+```
+
+
+
