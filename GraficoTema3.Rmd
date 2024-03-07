@@ -2,6 +2,10 @@
 title: "Imagen Tema 3 - Covid"
 author: "Juliana Justiniano, Valentina Medina, Jaime Gómez-Trenor y Mara Ferrús"
 date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -121,20 +125,18 @@ Para hace que la gráfica sea interactiva en el html vamos a utilizar ggplotly
 # Representamos
 grafica1 <- ggplotly(grafica) %>%
   layout(
-    annotations = list(
-      text = "7-day rolling average. For some countries the number of confirmed deaths is much lower than the true 
-      number of deaths. This is because of limited testing and challenges in the attribution of the cause of
-      death",
-      x = 0, #ubicación del subtítulo
-      y = 1.05,
-      xref = "paper",
-      yref = "paper",
-      showarrow = FALSE,
-      font = list(size = 10) #tamaño del subtítulo
+  annotations = list(
+  text = "7-day rolling average. For some countries the number of confirmed deaths is much lower than the true
+  number of deaths. This is because of limited testing and challenges in the attribution of the cause of death",
+        x = 0, #ubicación del subtítulo
+        y = 1.05,
+        xref = "paper",
+        yref = "paper",
+        showarrow = FALSE,
+        font = list(size = 10) #tamaño del subtítulo
       )
-    )
-
-# Llamamos a la gráfica.
+  )
+# Llamamos a la grafica
 grafica1
 ```
 
