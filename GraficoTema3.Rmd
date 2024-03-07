@@ -55,3 +55,30 @@ datos_covid$'new_deaths_smoothed_per_million'[is.na(datos_covid$'new_deaths_smoo
 summary(is.na(datos_covid))
 ```
 
+```{r}
+# Como se busca una información de paises en concreto, vamos a crear variables 
+# aparte donde entre ellos destacaremos Espanya.
+
+paises <- c("United States", "Canada", "Italy",            
+            "United Kingdom", "France", "Germany", "Japan")
+espanya <- "Spain"
+data <- c("location", "date", "new_deaths_smoothed_per_million")
+
+# Ahora seleccionaremos la información con los vectores anteriores
+# sabiendo que los paises están en location seleccionamos
+datos_paises <- covid[covid$location %in% paises, data]
+datos_esp <- covid[covid$location %in% espanya, data]
+datos_covid <- rbind(datos_esp, datos_paises)
+
+# Dentro de los datos que hemos seleccionado ahora vamos a ver si existe 
+# algún dato faltante con is.na()
+summary(is.na(datos_covid))
+```
+Como podemos ver que hay datos faltantes solo en la variable new_deaths_smoothed_per_million lo que vamos a hacer es sustiuir donde haya datos faltantes por la media de los datos para que no quede sin nigún NA.
+```{r}
+datos_covid$'new_deaths_smoothed_per_million'[is.na(datos_covid$'new_deaths_smoothed_per_million')] <- mean(datos_covid$'new_deaths_smoothed_per_million', na.rm = TRUE)
+
+# Comprobamos si lo ha hecho
+summary(is.na(datos_covid))
+```
+
