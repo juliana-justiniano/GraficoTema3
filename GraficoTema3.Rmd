@@ -3,12 +3,10 @@ title: "Imagen Tema 3 - Covid"
 author: "Juliana Justiniano, Valentina Medina, Jaime Gómez-Trenor y Mara Ferrús"
 date: "`r Sys.Date()`"
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 Imagen Tema 3 - Covid
-
 ```{r}
 # Cargamos las libreriasque vamos a utilizar:
 suppressWarnings({ # utilizamos esta función para que no se muestren los 
@@ -17,59 +15,24 @@ suppressWarnings({ # utilizamos esta función para que no se muestren los
   library(plotly)
 })
 ```
-
 ## Importamos los datos csv.
-
 ```{r}
 # Utilizamos read.csv con header = TRUE ya que la primera fila son las
 # variables que obtienen los datos
 covid <- read.csv("owid-covid-data.csv", header = TRUE)
 ```
-
 ```{r}
 # Como se busca una información de paises en concreto, vamos a crear variables 
 # aparte donde entre ellos destacaremos Espanya.
-
 paises <- c("United States", "Canada", "Italy",            
             "United Kingdom", "France", "Germany", "Japan")
 espanya <- "Spain"
 data <- c("location", "date", "new_deaths_smoothed_per_million")
-
 # Ahora seleccionaremos la información con los vectores anteriores
 # sabiendo que los paises están en location seleccionamos
 datos_paises <- covid[covid$location %in% paises, data]
 datos_esp <- covid[covid$location %in% espanya, data]
 datos_covid <- rbind(datos_esp, datos_paises)
-
-# Dentro de los datos que hemos seleccionado ahora vamos a ver si existe 
-# algún dato faltante con is.na()
-summary(is.na(datos_covid))
-```
-
-Como podemos ver que hay datos faltantes solo en la variable new_deaths_smoothed_per_million lo que vamos a hacer es sustiuir donde haya datos faltantes por la media de los datos para que no quede sin nigún NA.
-
-```{r}
-datos_covid$'new_deaths_smoothed_per_million'[is.na(datos_covid$'new_deaths_smoothed_per_million')] <- mean(datos_covid$'new_deaths_smoothed_per_million', na.rm = TRUE)
-
-# Comprobamos si lo ha hecho
-summary(is.na(datos_covid))
-```
-
-```{r}
-# Como se busca una información de paises en concreto, vamos a crear variables 
-# aparte donde entre ellos destacaremos Espanya.
-
-paises <- c("United States", "Canada", "Italy",            
-            "United Kingdom", "France", "Germany", "Japan")
-espanya <- "Spain"
-data <- c("location", "date", "new_deaths_smoothed_per_million")
-
-# Ahora seleccionaremos la información con los vectores anteriores
-# sabiendo que los paises están en location seleccionamos
-datos_paises <- covid[covid$location %in% paises, data]
-datos_esp <- covid[covid$location %in% espanya, data]
-datos_covid <- rbind(datos_esp, datos_paises)
-
 # Dentro de los datos que hemos seleccionado ahora vamos a ver si existe 
 # algún dato faltante con is.na()
 summary(is.na(datos_covid))
@@ -77,8 +40,51 @@ summary(is.na(datos_covid))
 Como podemos ver que hay datos faltantes solo en la variable new_deaths_smoothed_per_million lo que vamos a hacer es sustiuir donde haya datos faltantes por la media de los datos para que no quede sin nigún NA.
 ```{r}
 datos_covid$'new_deaths_smoothed_per_million'[is.na(datos_covid$'new_deaths_smoothed_per_million')] <- mean(datos_covid$'new_deaths_smoothed_per_million', na.rm = TRUE)
-
 # Comprobamos si lo ha hecho
 summary(is.na(datos_covid))
 ```
 
+```{r}
+# Como se busca una información de paises en concreto, vamos a crear variables 
+# aparte donde entre ellos destacaremos Espanya.
+paises <- c("United States", "Canada", "Italy",            
+            "United Kingdom", "France", "Germany", "Japan")
+espanya <- "Spain"
+data <- c("location", "date", "new_deaths_smoothed_per_million")
+# Ahora seleccionaremos la información con los vectores anteriores
+# sabiendo que los paises están en location seleccionamos
+datos_paises <- covid[covid$location %in% paises, data]
+datos_esp <- covid[covid$location %in% espanya, data]
+datos_covid <- rbind(datos_esp, datos_paises)
+# Dentro de los datos que hemos seleccionado ahora vamos a ver si existe 
+# algún dato faltante con is.na()
+summary(is.na(datos_covid))
+```
+Como podemos ver que hay datos faltantes solo en la variable new_deaths_smoothed_per_million lo que vamos a hacer es sustiuir donde haya datos faltantes por la media de los datos para que no quede sin nigún NA.
+```{r}
+datos_covid$'new_deaths_smoothed_per_million'[is.na(datos_covid$'new_deaths_smoothed_per_million')] <- mean(datos_covid$'new_deaths_smoothed_per_million', na.rm = TRUE)
+# Comprobamos si lo ha hecho
+summary(is.na(datos_covid))
+```
+
+Una herramienta que puede ayudar mejor a representar una gráfica es la librería ggplot que se encarga de eso, y podemos elegir la representación que queramos. A continuación utilizaremos una gráfica de líneas para poder comparar los casos que han muerto por covid de los paises con diferentes colores pero destacando a España con el color rojo.
+
+```{r, out.height = 550, out.width = 750}
+# Representación
+grafica <- ggplot(datos_covid,
+                  aes(x = date,
+                      y =new_deaths_smoothed_per_million,
+                      group = location))  +
+  
+  # Lineas de los paises que tendrán color con la variable location 
+  geom_line(data = datos_paises, aes(color = location), size = 0.75)  +
+  
+  # La línea roja que caracteriza a espanya
+  geom_line(data = datos_esp, aes(group = espanya),
+            color = "red", linewidth = 1.25) +
+  # Se usa para tener el color del fondo blanco 
+  theme_classic()
+
+# Llamamos a la gráfica
+grafica
+```
